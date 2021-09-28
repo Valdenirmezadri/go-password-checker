@@ -31,7 +31,7 @@ func TestPassword_countSpecialCharactersOfString(t *testing.T) {
 	type fields struct {
 		specialCharacters          []string
 		minChar                    uint8
-		maxChar                    uint8
+		maxChar                    uint
 		needNumberCount            uint8
 		needUpperCharactersCount   uint8
 		needSpecialCharactersCount uint8
@@ -72,7 +72,7 @@ func TestPassword_haveSpecialCharacters(t *testing.T) {
 	type fields struct {
 		specialCharacters          []string
 		minChar                    uint8
-		maxChar                    uint8
+		maxChar                    uint
 		needNumberCount            uint8
 		needUpperCharactersCount   uint8
 		needSpecialCharactersCount uint8
@@ -135,7 +135,7 @@ func TestPassword_haveUpperCharacters(t *testing.T) {
 	type fields struct {
 		specialCharacters          []string
 		minChar                    uint8
-		maxChar                    uint8
+		maxChar                    uint
 		needNumberCount            uint8
 		needUpperCharactersCount   uint8
 		needSpecialCharactersCount uint8
@@ -177,7 +177,7 @@ func TestPassword_haveNumberChar(t *testing.T) {
 	type fields struct {
 		specialCharacters          []string
 		minChar                    uint8
-		maxChar                    uint8
+		maxChar                    uint
 		needNumberCount            uint8
 		needUpperCharactersCount   uint8
 		needSpecialCharactersCount uint8
@@ -219,7 +219,7 @@ func TestPassword_MinChar(t *testing.T) {
 	type fields struct {
 		specialCharacters          []string
 		minChar                    uint8
-		maxChar                    uint8
+		maxChar                    uint
 		needNumberCount            uint8
 		needUpperCharactersCount   uint8
 		needSpecialCharactersCount uint8
@@ -261,7 +261,7 @@ func TestPassword_MaxChar(t *testing.T) {
 	type fields struct {
 		specialCharacters          []string
 		minChar                    uint8
-		maxChar                    uint8
+		maxChar                    uint
 		needNumberCount            uint8
 		needUpperCharactersCount   uint8
 		needSpecialCharactersCount uint8

@@ -7,21 +7,23 @@ import (
 )
 
 type Password struct {
-	specialCharacters                                                                       []string
-	minChar, maxChar, needNumberCount, needUpperCharactersCount, needSpecialCharactersCount uint8
+	specialCharacters                                                              []string
+	minChar, needNumberCount, needUpperCharactersCount, needSpecialCharactersCount uint8
+	maxChar                                                                        uint
 }
 
 /*
 New build a Password checker
 */
-func New(minChar, maxChar uint8,
-	needNumberCount uint8, needUpperCharactersCount uint8, needSpecialCharactersCount uint8, specialCharacters ...string) *Password {
+func New(minChar uint8, maxChar uint,
+	needNumberCount, needUpperCharactersCount, needSpecialCharactersCount uint8,
+	specialCharacters ...string) *Password {
 
 	if len(specialCharacters) == 0 {
 		specialCharacters = []string{"!", "@", "#", "$", "%", "&", "*", "-", "_", "=", "+", "^", "~", "?", ":"}
 	}
 
-	totalNeed := needUpperCharactersCount + needSpecialCharactersCount + needNumberCount
+	totalNeed := uint(needUpperCharactersCount + needSpecialCharactersCount + needNumberCount)
 
 	if totalNeed > maxChar {
 		maxChar = maxChar + totalNeed
