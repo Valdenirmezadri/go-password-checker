@@ -7,9 +7,9 @@ import (
 )
 
 type Password struct {
-	specialCharacters                                                              []string
-	minChar, needNumberCount, needUpperCharactersCount, needSpecialCharactersCount uint8
-	maxChar                                                                        uint
+	specialCharacters                                                               []string
+	_minChar, needNumberCount, needUpperCharactersCount, needSpecialCharactersCount uint8
+	_maxChar                                                                        uint
 }
 
 /*
@@ -31,8 +31,8 @@ func New(minChar uint8, maxChar uint,
 
 	return &Password{
 		specialCharacters:          specialCharacters,
-		minChar:                    minChar,
-		maxChar:                    maxChar,
+		_minChar:                   minChar,
+		_maxChar:                   maxChar,
 		needNumberCount:            needNumberCount,
 		needUpperCharactersCount:   needUpperCharactersCount,
 		needSpecialCharactersCount: needSpecialCharactersCount,
@@ -91,24 +91,24 @@ func (p *Password) haveNumberChar(pass string) bool {
 	return true
 }
 
-func (p *Password) MinChar(pass string) bool {
-	return len(pass) >= int(p.minChar)
+func (p *Password) minChar(pass string) bool {
+	return len(pass) >= int(p._minChar)
 }
 
-func (p *Password) MaxChar(pass string) bool {
-	if p.maxChar > 0 {
-		return len(pass) <= int(p.maxChar)
+func (p *Password) maxChar(pass string) bool {
+	if p._maxChar > 0 {
+		return len(pass) <= int(p._maxChar)
 	}
 
 	return true
 }
 
 func (p *Password) Check(pass string) error {
-	if !p.MinChar(pass) {
+	if !p.minChar(pass) {
 		return fmt.Errorf("senha precisa ter no mínimo %d caracteres", p.minChar)
 	}
 
-	if !p.MaxChar(pass) {
+	if !p.maxChar(pass) {
 		return fmt.Errorf("senha precisa ter no máximo %d caracteres", p.maxChar)
 	}
 
