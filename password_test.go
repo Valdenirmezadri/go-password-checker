@@ -312,11 +312,11 @@ func TestPassword_Check(t *testing.T) {
 		{name: "err-upperCase", args: args{pass: "12ASF12s3d"}, wantErr: true},
 		{name: "err-special-char", args: args{pass: "12AS!@#$AF123D"}, wantErr: true},
 		{name: "err-max-char", args: args{pass: "12AS!@#$AF123D12AS!@#$AF123D"}, wantErr: true},
-		{name: "pass", args: args{pass: "12A*S!@#$AF123D"}, wantErr: false},
+		{name: "pass", args: args{pass: "12asdrfA*S!@#$AF123D"}, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := New(4, 10, 5, 5, 5)
+			p := New(4, 10, 5, 5, 5, 5)
 			if err := p.Check(tt.args.pass); (err != nil) != tt.wantErr {
 				t.Errorf("Password.Check() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -337,7 +337,7 @@ func TestPassword_Check(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := New(4, 7, 1, 1, 1)
+			p := New(4, 7, 1, 1, 1, 1)
 			if err := p.Check(tt.args.pass); (err != nil) != tt.wantErr {
 				t.Errorf("Password.Check() error = %v, wantErr %v", err, tt.wantErr)
 			}
