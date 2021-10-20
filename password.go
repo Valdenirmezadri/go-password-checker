@@ -46,8 +46,8 @@ func New(minChar uint8, maxChar uint,
 
 func (p *Password) countSpecialCharactersOfString(pass string) (total int) {
 	for _, special := range p.specialCharacters {
-		if special != "" && strings.Contains(pass, special) {
-			total += 1
+		if special != "" {
+			total += strings.Count(pass, special)
 		}
 	}
 

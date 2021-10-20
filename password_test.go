@@ -311,6 +311,7 @@ func TestPassword_Check(t *testing.T) {
 		{name: "err-number", args: args{pass: "1a2s3dc5v"}, wantErr: true},
 		{name: "err-upperCase", args: args{pass: "12ASF12s3d"}, wantErr: true},
 		{name: "err-special-char", args: args{pass: "12AS!@#$AF123D"}, wantErr: true},
+		{name: "pass-same-special-char", args: args{pass: "aaaaa11111AAAAA!!!!!"}, wantErr: false},
 		{name: "err-max-char", args: args{pass: "12AS!@#$AF123D12AS!@#$AF123D"}, wantErr: true},
 		{name: "pass", args: args{pass: "12asdrfA*S!@#$AF123D"}, wantErr: false},
 	}
