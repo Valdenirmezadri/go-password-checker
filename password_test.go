@@ -53,12 +53,14 @@ func TestPassword_countSpecialCharactersOfString(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Password{
-				specialCharacters:          tt.fields.specialCharacters,
-				_minChar:                   tt.fields.minChar,
-				_maxChar:                   tt.fields.maxChar,
-				needNumberCount:            tt.fields.needNumberCount,
-				needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
-				needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				_rules: rules{
+					specialCharacters:          tt.fields.specialCharacters,
+					_minChar:                   tt.fields.minChar,
+					_maxChar:                   tt.fields.maxChar,
+					needNumberCount:            tt.fields.needNumberCount,
+					needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
+					needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				},
 			}
 			if gotTotal := p.countSpecialCharactersOfString(tt.args.pass); gotTotal != tt.wantTotal {
 				t.Errorf("Password.countSpecialCharactersOfString() = %v, want %v", gotTotal, tt.wantTotal)
@@ -96,12 +98,14 @@ func TestPassword_haveSpecialCharacters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Password{
-				specialCharacters:          tt.fields.specialCharacters,
-				_minChar:                   tt.fields.minChar,
-				_maxChar:                   tt.fields.maxChar,
-				needNumberCount:            tt.fields.needNumberCount,
-				needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
-				needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				_rules: rules{
+					specialCharacters:          tt.fields.specialCharacters,
+					_minChar:                   tt.fields.minChar,
+					_maxChar:                   tt.fields.maxChar,
+					needNumberCount:            tt.fields.needNumberCount,
+					needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
+					needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				},
 			}
 			if got := p.haveSpecialCharacters(tt.args.pass); got != tt.want {
 				t.Errorf("Password.haveSpecialCharacters() = %v, want %v", got, tt.want)
@@ -159,12 +163,14 @@ func TestPassword_haveUpperCharacters(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Password{
-				specialCharacters:          tt.fields.specialCharacters,
-				_minChar:                   tt.fields.minChar,
-				_maxChar:                   tt.fields.maxChar,
-				needNumberCount:            tt.fields.needNumberCount,
-				needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
-				needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				_rules: rules{
+					specialCharacters:          tt.fields.specialCharacters,
+					_minChar:                   tt.fields.minChar,
+					_maxChar:                   tt.fields.maxChar,
+					needNumberCount:            tt.fields.needNumberCount,
+					needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
+					needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				},
 			}
 			if got := p.haveUpperCharacters(tt.args.pass); got != tt.want {
 				t.Errorf("Password.haveUpperCharacters() = %v, want %v", got, tt.want)
@@ -201,12 +207,14 @@ func TestPassword_haveNumberChar(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Password{
-				specialCharacters:          tt.fields.specialCharacters,
-				_minChar:                   tt.fields.minChar,
-				_maxChar:                   tt.fields.maxChar,
-				needNumberCount:            tt.fields.needNumberCount,
-				needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
-				needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				_rules: rules{
+					specialCharacters:          tt.fields.specialCharacters,
+					_minChar:                   tt.fields.minChar,
+					_maxChar:                   tt.fields.maxChar,
+					needNumberCount:            tt.fields.needNumberCount,
+					needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
+					needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				},
 			}
 			if got := p.haveNumberChar(tt.args.pass); got != tt.want {
 				t.Errorf("Password.haveNumberChar() = %v, want %v", got, tt.want)
@@ -243,12 +251,14 @@ func TestPassword_MinChar(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Password{
-				specialCharacters:          tt.fields.specialCharacters,
-				_minChar:                   tt.fields.minChar,
-				_maxChar:                   tt.fields.maxChar,
-				needNumberCount:            tt.fields.needNumberCount,
-				needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
-				needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				_rules: rules{
+					specialCharacters:          tt.fields.specialCharacters,
+					_minChar:                   tt.fields.minChar,
+					_maxChar:                   tt.fields.maxChar,
+					needNumberCount:            tt.fields.needNumberCount,
+					needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
+					needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				},
 			}
 			if got := p.minChar(tt.args.pass); got != tt.want {
 				t.Errorf("Password.MinChar() = %v, want %v", got, tt.want)
@@ -285,12 +295,14 @@ func TestPassword_MaxChar(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Password{
-				specialCharacters:          tt.fields.specialCharacters,
-				_minChar:                   tt.fields.minChar,
-				_maxChar:                   tt.fields.maxChar,
-				needNumberCount:            tt.fields.needNumberCount,
-				needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
-				needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				_rules: rules{
+					specialCharacters:          tt.fields.specialCharacters,
+					_minChar:                   tt.fields.minChar,
+					_maxChar:                   tt.fields.maxChar,
+					needNumberCount:            tt.fields.needNumberCount,
+					needUpperCharactersCount:   tt.fields.needUpperCharactersCount,
+					needSpecialCharactersCount: tt.fields.needSpecialCharactersCount,
+				},
 			}
 			if got := p.maxChar(tt.args.pass); got != tt.want {
 				t.Errorf("Password.MaxChar() = %v, want %v", got, tt.want)

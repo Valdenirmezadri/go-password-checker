@@ -3,10 +3,11 @@ package passwordchecker
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"unicode"
 )
 
-type Password struct {
+type rules struct {
 	specialCharacters []string
 	_minChar,
 	needNumberCount,
@@ -16,6 +17,23 @@ type Password struct {
 	_maxChar uint
 }
 
+func (p *Password) rules() rules {
+	p.rulesLock.RLock()
+	defer p.rulesLock.RUnlock()
+	return p._rules
+}
+
+func (p *Password) setRules(r rules) {
+	p.rulesLock.Lock()
+	p._rules = r
+	p.rulesLock.Unlock()
+}
+
+type Password struct {
+	rulesLock sync.RWMutex
+	_rules    rules
+}
+
 /*
 New build a Password checker
 */
@@ -23,6 +41,29 @@ func New(minChar uint8, maxChar uint,
 	needNumberCount, needLowerCharactersCount, needUpperCharactersCount, needSpecialCharactersCount uint8,
 	specialCharacters ...string) *Password {
 
+	pass := &Password{}
+
+	pass.buildRules(minChar, maxChar,
+		needNumberCount, needLowerCharactersCount, needUpperCharactersCount, needSpecialCharactersCount,
+		specialCharacters)
+
+	return pass
+}
+
+//ChangeRules change the rules of passwords
+func (p *Password) ChangeRules(minChar uint8, maxChar uint,
+	needNumberCount, needLowerCharactersCount, needUpperCharactersCount, needSpecialCharactersCount uint8,
+	specialCharacters ...string) {
+
+	p.buildRules(minChar, maxChar,
+		needNumberCount, needLowerCharactersCount, needUpperCharactersCount, needSpecialCharactersCount,
+		specialCharacters)
+
+}
+
+func (p *Password) buildRules(minChar uint8, maxChar uint,
+	needNumberCount, needLowerCharactersCount, needUpperCharactersCount, needSpecialCharactersCount uint8,
+	specialCharacters []string) {
 	if len(specialCharacters) == 0 {
 		specialCharacters = []string{"!", "@", "#", "$", "%", "&", "*", "-", "_", "=", "+", "^", "~", "?", ":"}
 	}
@@ -33,19 +74,19 @@ func New(minChar uint8, maxChar uint,
 		maxChar = totalNeed
 	}
 
-	return &Password{
-		specialCharacters:          specialCharacters,
-		_minChar:                   minChar,
-		_maxChar:                   maxChar,
-		needNumberCount:            needNumberCount,
-		needLowerCharactersCount:   needLowerCharactersCount,
-		needUpperCharactersCount:   needUpperCharactersCount,
-		needSpecialCharactersCount: needSpecialCharactersCount,
-	}
+	rules := p.rules()
+	rules.specialCharacters = specialCharacters
+	rules._minChar = minChar
+	rules._maxChar = maxChar
+	rules.needNumberCount = needNumberCount
+	rules.needLowerCharactersCount = needLowerCharactersCount
+	rules.needUpperCharactersCount = needUpperCharactersCount
+	rules.needSpecialCharactersCount = needSpecialCharactersCount
+	p.setRules(rules)
 }
 
 func (p *Password) countSpecialCharactersOfString(pass string) (total int) {
-	for _, special := range p.specialCharacters {
+	for _, special := range p.rules().specialCharacters {
 		if special != "" {
 			total += strings.Count(pass, special)
 		}
@@ -55,8 +96,8 @@ func (p *Password) countSpecialCharactersOfString(pass string) (total int) {
 }
 
 func (p *Password) haveSpecialCharacters(pass string) bool {
-	if p.needSpecialCharactersCount > 0 {
-		return p.countSpecialCharactersOfString(pass) >= int(p.needSpecialCharactersCount)
+	if p.rules().needSpecialCharactersCount > 0 {
+		return p.countSpecialCharactersOfString(pass) >= int(p.rules().needSpecialCharactersCount)
 	}
 
 	return true
@@ -72,8 +113,8 @@ func countLowerCharactersOfString(pass string) (total int) {
 }
 
 func (p *Password) haveLowerCharacters(pass string) bool {
-	if p.needLowerCharactersCount > 0 {
-		return countLowerCharactersOfString(pass) >= int(p.needLowerCharactersCount)
+	if p.rules().needLowerCharactersCount > 0 {
+		return countLowerCharactersOfString(pass) >= int(p.rules().needLowerCharactersCount)
 	}
 
 	return true
@@ -89,8 +130,8 @@ func countUpperCharactersOfString(pass string) (total int) {
 }
 
 func (p *Password) haveUpperCharacters(pass string) bool {
-	if p.needUpperCharactersCount > 0 {
-		return countUpperCharactersOfString(pass) >= int(p.needUpperCharactersCount)
+	if p.rules().needUpperCharactersCount > 0 {
+		return countUpperCharactersOfString(pass) >= int(p.rules().needUpperCharactersCount)
 	}
 
 	return true
@@ -106,20 +147,20 @@ func countNumbersOfString(pass string) (total int) {
 }
 
 func (p *Password) haveNumberChar(pass string) bool {
-	if p.needNumberCount > 0 {
-		return countNumbersOfString(pass) >= int(p.needNumberCount)
+	if p.rules().needNumberCount > 0 {
+		return countNumbersOfString(pass) >= int(p.rules().needNumberCount)
 	}
 
 	return true
 }
 
 func (p *Password) minChar(pass string) bool {
-	return len(pass) >= int(p._minChar)
+	return len(pass) >= int(p.rules()._minChar)
 }
 
 func (p *Password) maxChar(pass string) bool {
-	if p._maxChar > 0 {
-		return len(pass) <= int(p._maxChar)
+	if p.rules()._maxChar > 0 {
+		return len(pass) <= int(p.rules()._maxChar)
 	}
 
 	return true
@@ -127,39 +168,39 @@ func (p *Password) maxChar(pass string) bool {
 
 func (p *Password) Check(pass string) error {
 	if !p.minChar(pass) {
-		return fmt.Errorf("senha precisa ter no mínimo %d caracteres", p._minChar)
+		return fmt.Errorf("senha precisa ter no mínimo %d caracteres", p.rules()._minChar)
 	}
 
 	if !p.maxChar(pass) {
-		return fmt.Errorf("senha precisa ter no máximo %d caracteres", p._maxChar)
+		return fmt.Errorf("senha precisa ter no máximo %d caracteres", p.rules()._maxChar)
 	}
 
 	if !p.haveNumberChar(pass) {
-		if p.needNumberCount > 1 {
-			return fmt.Errorf("senha precisa ter no mínimo %d números", p.needNumberCount)
+		if p.rules().needNumberCount > 1 {
+			return fmt.Errorf("senha precisa ter no mínimo %d números", p.rules().needNumberCount)
 		}
 		return fmt.Errorf("senha precisa ter no mínimo 1 número")
 	}
 
 	if !p.haveUpperCharacters(pass) {
-		if p.needUpperCharactersCount > 1 {
-			return fmt.Errorf("senha precisa ter no mínimo %d caracteres maiúsculos", p.needUpperCharactersCount)
+		if p.rules().needUpperCharactersCount > 1 {
+			return fmt.Errorf("senha precisa ter no mínimo %d caracteres maiúsculos", p.rules().needUpperCharactersCount)
 		}
 		return fmt.Errorf("senha precisa ter no mínimo 1 caracter maiúsculo")
 	}
 
 	if !p.haveLowerCharacters(pass) {
-		if p.needLowerCharactersCount > 1 {
-			return fmt.Errorf("senha precisa ter no mínimo %d caracteres minúsculos", p.needLowerCharactersCount)
+		if p.rules().needLowerCharactersCount > 1 {
+			return fmt.Errorf("senha precisa ter no mínimo %d caracteres minúsculos", p.rules().needLowerCharactersCount)
 		}
 		return fmt.Errorf("senha precisa ter no mínimo 1 caracter minúsculo")
 	}
 
 	if !p.haveSpecialCharacters(pass) {
-		if p.needSpecialCharactersCount > 1 {
-			return fmt.Errorf("senha precisa ter no mínimo %d caracteres especiais: %q", p.needSpecialCharactersCount, p.specialCharacters)
+		if p.rules().needSpecialCharactersCount > 1 {
+			return fmt.Errorf("senha precisa ter no mínimo %d caracteres especiais: %q", p.rules().needSpecialCharactersCount, p.rules().specialCharacters)
 		}
-		return fmt.Errorf("senha precisa ter no mínimo 1 caracter especial: %q", p.specialCharacters)
+		return fmt.Errorf("senha precisa ter no mínimo 1 caracter especial: %q", p.rules().specialCharacters)
 	}
 
 	return nil
